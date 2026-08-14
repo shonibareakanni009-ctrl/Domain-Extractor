@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Download & Extract Links</title>
+  <link rel="stylesheet" href="download-extract.css">
+</head>
+<body>
+  <h2>Download Website HTML & Extract Links</h2>
+
+  <div>
+    <input id="urlInput" type="text" placeholder="https://example.com" />
+    <button id="fetchBtn">Download & Extract Links</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <p class="small" id="notice">
+    Note: Direct fetching is attempted first. If blocked by CORS, a public proxy (AllOrigins) will be used as a fallback.
+    Using a public proxy sends the target URL to that service — see privacy notes below.
+  </p>
+
+  <div id="results">
+    <div><strong>Found links (deduplicated):</strong></div>
+    <div id="linksList"></div>
+
+    <div style="margin-top:12px;">
+      <button id="exportBtn" disabled>Download links as .txt</button>
+      <button id="exportDomainsBtn" disabled>Download domains as .txt</button>
+    </div>
+
+    <textarea id="rawHtml" placeholder="Downloaded HTML will appear here (optional)"></textarea>
+  </div>
+
+  <script src="download-extract.js"></script>
+
+  <hr/>
+  <div class="small">
+    Privacy & implementation notes:
+    <ul>
+      <li>Direct fetch (no proxy) is preferred for privacy. Many sites disallow cross-origin fetches; when that happens the script falls back to AllOrigins.</li>
+      <li>Using a public proxy sends the target page URL to that service, and may expose page contents to that proxy.</li>
+      <li>If you require full privacy, run your own small CORS-proxy (e.g., a tiny server you control) and set PROXY_RAW accordingly, or run this tool locally using a browser extension or Node script.</li>
+      <li>Sites with X-Frame-Options or other protections may still block embedding; this script only fetches raw HTML and parses it, so embedding is not required.</li>
+    </ul>
+  </div>
+</body>
+</html>
