@@ -15,8 +15,8 @@
   </div>
 
   <p class="small" id="notice">
-    Note: Direct fetching is attempted first. If blocked by CORS, a public proxy (AllOrigins) will be used as a fallback.
-    Using a public proxy sends the target URL to that service — see privacy notes below.
+    Note: The site uses a server-side fetch endpoint first, then direct and proxy fallbacks. Requests time out cleanly instead of hanging.
+    If a public proxy is used, the target URL and page contents may be sent to that service — see privacy notes below.
   </p>
 
   <div id="results">
@@ -37,9 +37,9 @@
   <div class="small">
     Privacy & implementation notes:
     <ul>
-      <li>Direct fetch (no proxy) is preferred for privacy. Many sites disallow cross-origin fetches; when that happens the script falls back to AllOrigins.</li>
+      <li>The Netlify server-side endpoint is preferred because browser CORS blocks many websites. Direct browser fetch and AllOrigins are fallback options.</li>
       <li>Using a public proxy sends the target page URL to that service, and may expose page contents to that proxy.</li>
-      <li>If you require full privacy, run your own small CORS-proxy (e.g., a tiny server you control) and set PROXY_RAW accordingly, or run this tool locally using a browser extension or Node script.</li>
+      <li>For strict privacy, host the server-side function yourself or run this tool locally; do not use a public proxy.</li>
       <li>Sites with X-Frame-Options or other protections may still block embedding; this script only fetches raw HTML and parses it, so embedding is not required.</li>
     </ul>
   </div>

@@ -1,0 +1,5 @@
+# Author: Shonibare Akanni
+
+[build]
+  publish = "."
+  functions = "netlify/functions"

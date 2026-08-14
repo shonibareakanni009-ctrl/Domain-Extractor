@@ -17,16 +17,34 @@ function normalizeUrl(value) {
   return new URL(/^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`);
 }
 
-async function fetchHtml(targetUrl) {
+async function fetchWithTimeout(url, options = {}, timeoutMs = 16000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(targetUrl, { headers: { Accept: 'text/html' } });
-    if (!response.ok) throw new Error(`Direct request returned HTTP ${response.status}`);
-    return { html: await response.text(), source: 'direct request' };
-  } catch (directError) {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-    const response = await fetch(proxyUrl);
-    if (!response.ok) throw new Error(`Direct request failed and proxy returned HTTP ${response.status}`);
-    return { html: await response.text(), source: 'AllOrigins fallback proxy' };
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchHtml(targetUrl) {
+  const endpoint = `/.netlify/functions/fetch-html?url=${encodeURIComponent(targetUrl)}`;
+  try {
+    const response = await fetchWithTimeout(endpoint);
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `Server returned HTTP ${response.status}`);
+    return { html: result.html, source: 'secure server-side fetch', finalUrl: result.finalUrl };
+  } catch (serverError) {
+    try {
+      const response = await fetchWithTimeout(targetUrl, { headers: { Accept: 'text/html' } });
+      if (!response.ok) throw new Error(`Direct request returned HTTP ${response.status}`);
+      return { html: await response.text(), source: 'direct request', finalUrl: response.url || targetUrl };
+    } catch (directError) {
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+      const response = await fetchWithTimeout(proxyUrl);
+      if (!response.ok) throw new Error(`All available fetch methods failed (HTTP ${response.status})`);
+      return { html: await response.text(), source: 'AllOrigins fallback proxy', finalUrl: targetUrl };
+    }
   }
 }
 
@@ -89,7 +107,7 @@ fetchBtn.addEventListener('click', async () => {
   try {
     const result = await fetchHtml(target.href);
     rawHtml.value = result.html;
-    extractedLinks = extractLinks(result.html, target.href);
+    extractedLinks = extractLinks(result.html, result.finalUrl || target.href);
     renderLinks();
     notice.className = 'small';
     notice.textContent = `Downloaded ${result.html.length.toLocaleString()} characters via ${result.source}. Found ${extractedLinks.length} unique links.`;

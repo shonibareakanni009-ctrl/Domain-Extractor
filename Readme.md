@@ -35,7 +35,7 @@ Paste raw text, drop a file, or paste a whole document dump — it pulls out eve
 4. Click **Extract** and export your results.
 5. To scrape a public page, click **Download Website HTML**, enter its URL, and export the extracted links or domains.
 
-No build step, no npm install, no backend required. Direct website requests may be blocked by browser CORS rules; the downloader uses the AllOrigins public proxy as a fallback.
+No build step or npm install is required. The downloader uses a Netlify serverless function for reliable fetching, with direct and AllOrigins fallbacks when necessary. Requests have a timeout and display a clear error if all methods fail.
 
 ---
 
