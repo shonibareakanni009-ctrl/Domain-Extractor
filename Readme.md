@@ -16,6 +16,7 @@ Paste raw text, drop a file, or paste a whole document dump — it pulls out eve
 | **Privacy First** | Everything runs locally. No data leaves your machine. |
 | **File Upload** | Choose a file or drag and drop `.txt`, `.csv`, `.html`, `.json`, or `.md` files directly onto the page. |
 | **Website HTML Download** | Open **Download Website HTML**, enter a URL, download its HTML, extract unique links, and export links or domains. |
+| **Merchant Genius Crawl** | Automatically crawls extracted Merchant Genius links to identify and export the original store domains. |
 | **Smart Deduplication** | Case-insensitive unique filter with optional lowercase normalization. |
 | **Subdomain Control** | Toggle to strip `www.` and subdomains to get root domains only. |
 | **TLD Filtering** | Dynamically shows all TLDs found; click to filter the list in real time. |

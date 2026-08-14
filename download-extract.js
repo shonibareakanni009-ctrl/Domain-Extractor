@@ -8,8 +8,12 @@ const rawHtml = document.getElementById('rawHtml');
 const notice = document.getElementById('notice');
 const exportBtn = document.getElementById('exportBtn');
 const exportDomainsBtn = document.getElementById('exportDomainsBtn');
+const merchantStatus = document.getElementById('merchantStatus');
+const merchantResults = document.getElementById('merchantResults');
+const exportMerchantBtn = document.getElementById('exportMerchantBtn');
 
 let extractedLinks = [];
+let merchantDomains = [];
 
 function normalizeUrl(value) {
   const candidate = value.trim();
@@ -57,6 +61,73 @@ function extractLinks(html, baseUrl) {
       try { return new URL(href, baseUrl).href; } catch { return null; }
     })
     .filter((href, index, links) => href && links.indexOf(href) === index);
+}
+
+function isMerchantGeniusLink(value) {
+  try {
+    return new URL(value).hostname.toLowerCase().endsWith('merchantgenius.io');
+  } catch {
+    return false;
+  }
+}
+
+function extractStoreDomain(html, pageUrl) {
+  const text = new DOMParser().parseFromString(html, 'text/html').body.textContent.replace(/\s+/g, ' ');
+  const publicDomain = text.match(/publicly registered domain name for this store is\s+([a-z0-9][a-z0-9.-]+\.[a-z]{2,})/i);
+  if (publicDomain) return publicDomain[1].toLowerCase().replace(/^www\./, '');
+
+  const shopifyDomain = text.match(/account name\s+([a-z0-9][a-z0-9-]*\.myshopify\.com)/i);
+  if (shopifyDomain) return shopifyDomain[1].toLowerCase();
+
+  try {
+    const match = new URL(pageUrl).pathname.match(/\/shop\/url\/([^/?#]+)/i);
+    return match ? decodeURIComponent(match[1]).toLowerCase().replace(/^www\./, '') : null;
+  } catch {
+    return null;
+  }
+}
+
+function renderMerchantResults() {
+  merchantResults.innerHTML = '';
+  if (!merchantDomains.length) {
+    merchantResults.textContent = 'No Merchant Genius store domains found.';
+    exportMerchantBtn.disabled = true;
+    return;
+  }
+  merchantDomains.forEach(domain => {
+    const item = document.createElement('div');
+    const link = document.createElement('a');
+    link.href = `https://${domain}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = domain;
+    item.appendChild(link);
+    merchantResults.appendChild(item);
+  });
+  exportMerchantBtn.disabled = false;
+}
+
+async function crawlMerchantGeniusLinks(links) {
+  const merchantLinks = links.filter(isMerchantGeniusLink);
+  merchantDomains = [];
+  renderMerchantResults();
+  if (!merchantLinks.length) {
+    merchantStatus.textContent = 'No Merchant Genius links detected.';
+    return;
+  }
+
+  merchantStatus.textContent = `Crawling ${merchantLinks.length} Merchant Genius link${merchantLinks.length === 1 ? '' : 's'}…`;
+  const results = await Promise.all(merchantLinks.slice(0, 25).map(async link => {
+    try {
+      const page = await fetchHtml(link);
+      return extractStoreDomain(page.html, page.finalUrl || link);
+    } catch {
+      return null;
+    }
+  }));
+  merchantDomains = results.filter(Boolean).filter((domain, index, all) => all.indexOf(domain) === index);
+  renderMerchantResults();
+  merchantStatus.textContent = `Crawled ${Math.min(merchantLinks.length, 25)} Merchant Genius link${merchantLinks.length === 1 ? '' : 's'} and found ${merchantDomains.length} store domain${merchantDomains.length === 1 ? '' : 's'}.`;
 }
 
 function renderLinks() {
@@ -109,6 +180,7 @@ fetchBtn.addEventListener('click', async () => {
     rawHtml.value = result.html;
     extractedLinks = extractLinks(result.html, result.finalUrl || target.href);
     renderLinks();
+    await crawlMerchantGeniusLinks(extractedLinks);
     notice.className = 'small';
     notice.textContent = `Downloaded ${result.html.length.toLocaleString()} characters via ${result.source}. Found ${extractedLinks.length} unique links.`;
   } catch (error) {
@@ -126,6 +198,8 @@ clearBtn.addEventListener('click', () => {
   urlInput.value = '';
   rawHtml.value = '';
   extractedLinks = [];
+  merchantDomains = [];
+  renderMerchantResults();
   notice.className = 'small';
   notice.textContent = 'Enter a URL to download its HTML and extract links.';
   renderLinks();
@@ -138,4 +212,7 @@ exportDomainsBtn.addEventListener('click', () => {
   saveText('domains.txt', domains.join('\n'));
 });
 
+exportMerchantBtn.addEventListener('click', () => saveText('merchant-genius-store-domains.txt', merchantDomains.join('\n')));
+
 renderLinks();
+renderMerchantResults();
