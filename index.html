@@ -363,6 +363,7 @@
 
   <header>
     <h1>🔗 Domain Extractor</h1>
+    <a class="btn-secondary" href="download-extract.html" style="text-decoration:none;">Download Website HTML</a>
     <div class="theme-toggle">
       <button onclick="setTheme('light')" id="btn-light">Light</button>
       <button onclick="setTheme('dark')" id="btn-dark" class="active">Dark</button>
@@ -376,8 +377,9 @@
       <h2>Input</h2>
 
       <div class="drop-zone" id="dropZone">
-        <div>📂 Drag & drop files here or click to paste text below</div>
+        <div>📂 Drag & drop a file here or choose one below</div>
         <div style="font-size:0.8rem; margin-top:6px; opacity:0.7;">Supports .txt .csv .html .json .md</div>
+        <input type="file" id="fileInput" accept=".txt,.csv,.html,.json,.md,text/plain,text/html,application/json,text/markdown" style="margin-top:12px; width:100%;" />
       </div>
 
       <textarea id="input" placeholder="Paste raw text here…"></textarea>
@@ -455,20 +457,29 @@
 
     // ---------- FILE DROP ----------
     const dz = $('dropZone');
-    dz.addEventListener('click', () => $('input').focus());
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
-    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
-    dz.addEventListener('drop', e => {
-      e.preventDefault();
-      dz.classList.remove('dragover');
-      const file = e.dataTransfer.files[0];
+    const fileInput = $('fileInput');
+
+    function readInputFile(file) {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = ev => {
         $('input').value = ev.target.result;
         extractDomains();
       };
+      reader.onerror = () => showToast('Could not read that file', true);
       reader.readAsText(file);
+    }
+
+    fileInput.addEventListener('change', e => readInputFile(e.target.files[0]));
+    dz.addEventListener('click', e => {
+      if (e.target !== fileInput) fileInput.click();
+    });
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('dragover');
+      readInputFile(e.dataTransfer.files[0]);
     });
 
     // ---------- EXTRACTION ----------

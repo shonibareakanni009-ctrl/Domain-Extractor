@@ -1,0 +1,65 @@
+/* Author: Shonibare Akanni */
+
+:root {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --border: #334155;
+  --danger: #f87171;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+h2 { color: var(--accent); }
+
+input, textarea, button {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0b1220;
+  color: var(--text);
+}
+
+input { margin-bottom: 10px; }
+textarea { min-height: 260px; margin-top: 12px; resize: vertical; }
+
+button {
+  padding: 10px 14px;
+  margin: 0 8px 8px 0;
+  background: var(--accent);
+  color: #082f49;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:disabled { cursor: not-allowed; opacity: 0.5; }
+
+#linksList {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+#linksList a { color: var(--accent); overflow-wrap: anywhere; }
+.small { color: var(--muted); font-size: 0.9rem; }
+.error { color: var(--danger); }
+.loading { opacity: 0.7; }

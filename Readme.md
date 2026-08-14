@@ -14,7 +14,8 @@ Paste raw text, drop a file, or paste a whole document dump — it pulls out eve
 |---|---|
 | **Instant Extraction** | Regex + line-scanning dual engine catches domains in URLs, emails, logs, and plain text. |
 | **Privacy First** | Everything runs locally. No data leaves your machine. |
-| **Drag & Drop Files** | Drop `.txt`, `.csv`, `.html`, `.json`, or `.md` files directly onto the page. |
+| **File Upload** | Choose a file or drag and drop `.txt`, `.csv`, `.html`, `.json`, or `.md` files directly onto the page. |
+| **Website HTML Download** | Open **Download Website HTML**, enter a URL, download its HTML, extract unique links, and export links or domains. |
 | **Smart Deduplication** | Case-insensitive unique filter with optional lowercase normalization. |
 | **Subdomain Control** | Toggle to strip `www.` and subdomains to get root domains only. |
 | **TLD Filtering** | Dynamically shows all TLDs found; click to filter the list in real time. |
@@ -32,8 +33,9 @@ Paste raw text, drop a file, or paste a whole document dump — it pulls out eve
 2. **Double-click** to open in any modern browser.
 3. **Paste** text or **drag & drop** a file.
 4. Click **Extract** and export your results.
+5. To scrape a public page, click **Download Website HTML**, enter its URL, and export the extracted links or domains.
 
-No build step, no npm install, no backend required.
+No build step, no npm install, no backend required. Direct website requests may be blocked by browser CORS rules; the downloader uses the AllOrigins public proxy as a fallback.
 
 ---
 
@@ -57,6 +59,10 @@ Enable **Advanced Mode** to edit the extraction regex live. Useful for catching 
 ---
 
 ## 📁 File Structure
+
+- `index.html` — main domain extractor with working file selection and drag-and-drop upload.
+- `download-extract.html`, `download-extract.css`, `download-extract.js` — website HTML downloader and link scraper.
+
 domain-extractor/
 ├── domain-extractor.html   # The entire app
 ├── README.md
