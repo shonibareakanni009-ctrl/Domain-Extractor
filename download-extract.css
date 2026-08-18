@@ -1,76 +1,68 @@
-/* Author: Shonibare Akanni */
-
-:root {
-  color-scheme: dark;
-  --bg: #0f172a;
-  --panel: #1e293b;
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --accent: #38bdf8;
-  --border: #334155;
-  --danger: #f87171;
+/* download-extract.css */
+:root{
+  --max-width:920px;
+  --gap:12px;
+  --muted:#555;
+  --accent:#0366d6;
+  --bg:#fff;
+  --radius:6px;
+  --border:#ddd;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Helvetica Neue", monospace;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 32px 16px;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, sans-serif;
+body{
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#111;
+  margin:24px;
+  max-width:var(--max-width);
+  line-height:1.4;
 }
 
-h2 { color: var(--accent); }
+h2{margin:0 0 12px 0}
 
-input, textarea, button {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font: inherit;
+input[type="text"]{
+  width:70%;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:4px;
+  font-size:1rem;
 }
 
-input, textarea {
-  width: 100%;
-  padding: 10px 12px;
-  background: #0b1220;
-  color: var(--text);
+button{
+  margin-left:8px;
+  padding:9px 12px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:#f6f8fa;
+  cursor:pointer;
+  font-weight:600;
 }
 
-input { margin-bottom: 10px; }
-textarea { min-height: 260px; margin-top: 12px; resize: vertical; }
-
-button {
-  padding: 10px 14px;
-  margin: 0 8px 8px 0;
-  background: var(--accent);
-  color: #082f49;
-  cursor: pointer;
-  font-weight: 700;
+button:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
 }
 
-button:disabled { cursor: not-allowed; opacity: 0.5; }
-
-#linksList {
-  display: grid;
-  gap: 6px;
-  margin-top: 10px;
-  max-height: 320px;
-  overflow: auto;
+#results{margin-top:16px}
+.small{font-size:0.9rem;color:var(--muted)}
+#linksList ul{padding-left:20px;margin-top:8px}
+#linksList li{margin:6px 0; word-break:break-all}
+textarea#rawHtml{
+  width:100%;
+  height:160px;
+  margin-top:8px;
+  padding:8px;
+  border-radius:6px;
+  border:1px solid var(--border);
+  font-family:var(--mono);
+  resize:vertical;
 }
 
-#linksList a { color: var(--accent); overflow-wrap: anywhere; }
-.merchant-panel {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
+/* responsive */
+@media (max-width:640px){
+  input[type="text"]{width:100%; margin-bottom:8px}
+  button{margin-left:0;margin-top:6px}
 }
-#merchantResults {
-  display: grid;
-  gap: 6px;
-  margin: 10px 0;
-}
-#merchantResults a { color: var(--accent); overflow-wrap: anywhere; }
-.small { color: var(--muted); font-size: 0.9rem; }
-.error { color: var(--danger); }
-.loading { opacity: 0.7; }
