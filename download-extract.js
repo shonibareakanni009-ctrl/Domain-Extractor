@@ -1,4 +1,3 @@
-// download-extract.js
 (() => {
   const urlInput = document.getElementById('urlInput');
   const fetchBtn = document.getElementById('fetchBtn');
@@ -9,11 +8,9 @@
   const exportDomainsBtn = document.getElementById('exportDomainsBtn');
   const notice = document.getElementById('notice');
 
-  // Public fallback proxy (AllOrigins). Replace if you host a proxy.
   const PROXY_RAW = url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
 
   async function tryFetch(url) {
-    // 1) Direct fetch (privacy-friendly)
     try {
       const resp = await fetch(url, { method: 'GET', mode: 'cors' });
       if (!resp.ok) throw new Error('Network response not ok: ' + resp.status);
@@ -23,7 +20,6 @@
       console.warn('Direct fetch failed:', err);
     }
 
-    // 2) Proxy fallback
     try {
       const proxyUrl = PROXY_RAW(url);
       const resp = await fetch(proxyUrl, { method: 'GET' });
@@ -70,7 +66,7 @@
           seen.add(host);
           domains.push(host);
         }
-      } catch (e) { /* ignore */ }
+      } catch (e) {  }
     }
     return domains;
   }

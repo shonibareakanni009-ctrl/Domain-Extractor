@@ -1,4 +1,3 @@
-// Author: Shonibare Akanni
 
 const { handler } = require('./netlify/functions/fetch-html');
 
